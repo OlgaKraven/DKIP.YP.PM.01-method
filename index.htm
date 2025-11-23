@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Методические материалы по C#</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Методические материалы по C#</h1>
+    <p>Сводный конспект по базовым темам языка C#, массивам и коллекциям, методам, основам ООП, строкам, алгоритмам и отладке.</p>
+  </header>
+
+  <nav class="toc">
+    <h2>Навигация по разделам</h2>
+    <ul>
+      <li><a href="#intro">1. Методические материалы</a></li>
+      <li><a href="#basics-csharp">2. Основы языка C#</a>
+        <ul>
+          <li><a href="#vars-types">2.1. Переменные и типы данных</a></li>
+          <li><a href="#arithmetics">2.2. Арифметические операции</a></li>
+          <li><a href="#logic-ops">2.3. Логические операции (&&, ||, !)</a></li>
+          <li><a href="#compare-ops">2.4. Операторы сравнения</a></li>
+          <li><a href="#conditions">2.5. Условные конструкции</a></li>
+          <li><a href="#loops">2.6. Циклы</a></li>
+        </ul>
+      </li>
+      <li><a href="#arrays-collections">3. Массивы и коллекции в C#</a></li>
+      <li><a href="#methods-structuring">4. Методы и структурирование кода</a></li>
+      <li><a href="#oop-basics">5. Основы ООП (минимум)</a></li>
+      <li><a href="#strings">6. Работа со строками в C#</a></li>
+      <li><a href="#algorithms">7. Основы алгоритмов</a></li>
+      <li><a href="#debugging">8. Простая отладка (начальный уровень)</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- 1. Вводный раздел -->
+    <section id="intro">
+      <h2>1. Методические материалы</h2>
+      <p>Данный документ содержит краткие методические материалы для повторения перед выполнением задания по учебной практике ПМ.01 Разработка модулей ПО для КС.</p>
+    </section>
+
+    <!-- 2. Основы языка C# -->
+    <section id="basics-csharp">
+      <h2>2. Основы языка C#</h2>
+
+      <section id="vars-types">
+        <h3>2.1. Переменные и типы данных</h3>
+        <p>В C# каждая переменная имеет тип, который определяет, какой вид данных она хранит.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Тип</th>
+              <th>Описание</th>
+              <th>Пример</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>int</td>
+              <td>целые числа</td>
+              <td><code>int age = 20;</code></td>
+            </tr>
+            <tr>
+              <td>double</td>
+              <td>дробные числа</td>
+              <td><code>double price = 19.99;</code></td>
+            </tr>
+            <tr>
+              <td>string</td>
+              <td>строки</td>
+              <td><code>string name = "Alice";</code></td>
+            </tr>
+            <tr>
+              <td>bool</td>
+              <td>логическое значение</td>
+              <td><code>bool isActive = true;</code></td>
+            </tr>
+            <tr>
+              <td>char</td>
+              <td>один символ</td>
+              <td><code>char grade = 'A';</code></td>
+            </tr>
+            <tr>
+              <td>DateTime</td>
+              <td>дата и время</td>
+              <td><code>DateTime now = DateTime.Now;</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Пример использования</h4>
+        <pre><code>int count = 5;
+double temperature = 23.7;
+string city = "Moscow";
+bool isOpen = true;
+char letter = 'Z';
+DateTime today = DateTime.Today;
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section id="arithmetics">
+        <h3>2.2. Арифметические операции</h3>
+        <p>В C# поддерживаются стандартные арифметические операции:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Операция</th>
+              <th>Пример</th>
+              <th>Результат</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>+</td><td>5 + 2</td><td>7</td></tr>
+            <tr><td>-</td><td>9 - 3</td><td>6</td></tr>
+            <tr><td>*</td><td>4 * 2</td><td>8</td></tr>
+            <tr><td>/</td><td>10 / 3</td><td>3 (для int)</td></tr>
+            <tr><td>%</td><td>10 % 3</td><td>1 (остаток)</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Пример</h4>
+        <pre><code>int a = 10;
+int b = 3;
+
+int sum = a + b;       // 13
+int diff = a - b;      // 7
+int mult = a * b;      // 30
+int div = a / b;       // 3
+int mod = a % b;       // 1
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section id="logic-ops">
+        <h3>2.3. Логические операции (&&, ||, !)</h3>
+        <p>Используются для работы с булевыми значениями:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Оператор</th>
+              <th>Описание</th>
+              <th>Пример</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>&amp;&amp;</td>
+              <td>логическое И</td>
+              <td><code>true &amp;&amp; false → false</code></td>
+            </tr>
+            <tr>
+              <td>||</td>
+              <td>логическое ИЛИ</td>
+              <td><code>true || false → true</code></td>
+            </tr>
+            <tr>
+              <td>!</td>
+              <td>логическое НЕ</td>
+              <td><code>!true → false</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Пример</h4>
+        <pre><code>bool isAdult = true;
+bool hasTicket = false;
+
+bool canEnter = isAdult && hasTicket;   // false
+bool guestAccess = isAdult || hasTicket; // true
+bool notAdult = !isAdult;                // false
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section id="compare-ops">
+        <h3>2.4. Операторы сравнения</h3>
+        <p>Используются в условиях:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Оператор</th>
+              <th>Значение</th>
+              <th>Пример</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>&lt;</td><td>меньше</td><td><code>5 &lt; 8 → true</code></td></tr>
+            <tr><td>&gt;</td><td>больше</td><td><code>5 &gt; 2 → true</code></td></tr>
+            <tr><td>==</td><td>равно</td><td><code>10 == 10 → true</code></td></tr>
+            <tr><td>!=</td><td>не равно</td><td><code>10 != 5 → true</code></td></tr>
+            <tr><td>&lt;=</td><td>меньше или равно</td><td><code>3 &lt;= 3</code></td></tr>
+            <tr><td>&gt;=</td><td>больше или равно</td><td><code>5 &gt;= 1</code></td></tr>
+          </tbody>
+        </table>
+
+        <h4>Пример</h4>
+        <pre><code>int x = 10;
+
+bool isEqual = x == 10;   // true
+bool isNotEqual = x != 5; // true
+bool isLess = x &lt; 5;      // false
+bool isMore = x &gt; 7;      // true
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section id="conditions">
+        <h3>2.5. Условные конструкции</h3>
+
+        <h4>if / else if / else</h4>
+        <pre><code>int temp = 5;
+
+if (temp &gt; 20)
+{
+    Console.WriteLine("Тепло");
+}
+else if (temp &gt; 0)
+{
+    Console.WriteLine("Прохладно");
+}
+else
+{
+    Console.WriteLine("Холодно");
+}
+</code></pre>
+
+        <h4>switch</h4>
+        <p>Используется при сравнении со значениями:</p>
+        <pre><code>int day = 3;
+
+switch (day)
+{
+    case 1:
+        Console.WriteLine("Понедельник");
+        break;
+    case 2:
+        Console.WriteLine("Вторник");
+        break;
+    case 3:
+        Console.WriteLine("Среда");
+        break;
+    default:
+        Console.WriteLine("Неизвестный день");
+        break;
+}
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section id="loops">
+        <h3>2.6. Циклы</h3>
+
+        <h4>for</h4>
+        <p>Используется, когда известно количество повторений:</p>
+        <pre><code>for (int i = 0; i &lt; 5; i++)
+{
+    Console.WriteLine("i = " + i);
+}
+</code></pre>
+
+        <h4>foreach</h4>
+        <p>Перебор элементов коллекции:</p>
+        <pre><code>string[] fruits = { "Apple", "Banana", "Cherry" };
+
+foreach (string fruit in fruits)
+{
+    Console.WriteLine(fruit);
+}
+</code></pre>
+
+        <h4>while</h4>
+        <p>Цикл выполняется пока условие истинно:</p>
+        <pre><code>int count = 3;
+
+while (count &gt; 0)
+{
+    Console.WriteLine(count);
+    count--;
+}
+</code></pre>
+
+        <h4>do…while</h4>
+        <p>Выполняется хотя бы один раз:</p>
+        <pre><code>int number = 1;
+
+do
+{
+    Console.WriteLine("number = " + number);
+    number++;
+}
+while (number &lt;= 3);
+</code></pre>
+      </section>
+    </section>
+
+    <!-- 3. Массивы и коллекции -->
+    <section id="arrays-collections">
+      <h2>3. Массивы и коллекции в C#</h2>
+
+      <section>
+        <h3>3.1. Одномерные массивы</h3>
+        <p>Массив — это фиксированная по размеру структура данных, содержащая элементы одного типа.</p>
+
+        <h4>Объявление массива</h4>
+        <pre><code>int[] numbers = new int[5];  // массив на 5 элементов
+</code></pre>
+
+        <h4>Инициализация массива</h4>
+        <pre><code>int[] nums = { 10, 20, 30, 40, 50 };
+</code></pre>
+
+        <h4>Доступ к элементам</h4>
+        <pre><code>Console.WriteLine(nums[0]); // 10
+nums[2] = 99;               // элемент с индексом 2 станет 99
+</code></pre>
+
+        <h4>Перебор массива циклом for</h4>
+        <pre><code>for (int i = 0; i &lt; nums.Length; i++)
+{
+    Console.WriteLine(nums[i]);
+}
+</code></pre>
+
+        <h4>Перебор массива foreach</h4>
+        <pre><code>foreach (int item in nums)
+{
+    Console.WriteLine(item);
+}
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>3.2. Списки (List&lt;T&gt;)</h3>
+        <p>List&lt;T&gt; — динамическая коллекция, количество элементов может меняться.</p>
+
+        <p>Для работы нужен импорт:</p>
+        <pre><code>using System.Collections.Generic;
+</code></pre>
+
+        <h4>3.2.1. Создание списка</h4>
+        <pre><code>List&lt;int&gt; scores = new List&lt;int&gt;();
+</code></pre>
+        <p>Или с начальными значениями:</p>
+        <pre><code>List&lt;int&gt; grades = new List&lt;int&gt; { 4, 5, 3, 5 };
+</code></pre>
+
+        <h4>3.2.2. Добавление элементов</h4>
+        <pre><code>scores.Add(10);
+scores.Add(20);
+scores.Add(30);
+</code></pre>
+
+        <h4>3.2.3. Удаление элементов</h4>
+        <p>Удаление по значению:</p>
+        <pre><code>grades.Remove(5); // удаляет первое найденное значение 5
+</code></pre>
+        <p>Удаление по индексу:</p>
+        <pre><code>grades.RemoveAt(0); // удаляет элемент с индексом 0
+</code></pre>
+        <p>Очистка списка:</p>
+        <pre><code>grades.Clear();
+</code></pre>
+
+        <h4>3.2.4. Перебор элементов списка</h4>
+        <p>Через for:</p>
+        <pre><code>for (int i = 0; i &lt; scores.Count; i++)
+{
+    Console.WriteLine(scores[i]);
+}
+</code></pre>
+        <p>Через foreach:</p>
+        <pre><code>foreach (int score in scores)
+{
+    Console.WriteLine(score);
+}
+</code></pre>
+
+        <h4>3.2.5. Поиск по условию</h4>
+        <p>Найти первый элемент, удовлетворяющий условию:</p>
+        <pre><code>int found = grades.Find(g =&gt; g &lt; 4); // ищем оценку &lt; 4
+</code></pre>
+        <p>Найти все элементы по условию:</p>
+        <pre><code>List&lt;int&gt; goodGrades = grades.FindAll(g =&gt; g &gt;= 4);
+</code></pre>
+        <p>Проверка, есть ли элемент:</p>
+        <pre><code>bool hasFive = grades.Contains(5);
+</code></pre>
+        <p>Поиск индекса:</p>
+        <pre><code>int index = grades.IndexOf(3);
+</code></pre>
+      </section>
+    </section>
+
+    <!-- 4. Методы и структурирование кода -->
+    <section id="methods-structuring">
+      <h2>4. Методы и структурирование кода в C#</h2>
+      <p>Методы позволяют разбивать программу на небольшие, удобные части. Это делает код понятным, упрощает сопровождение и повторное использование.</p>
+
+      <section>
+        <h3>4.1. Создание методов с параметрами</h3>
+        <p>Метод — это блок кода, который выполняет определённое действие. Он может принимать параметры (входные данные).</p>
+
+        <h4>Простой метод с параметром</h4>
+        <pre><code>void PrintMessage(string text)
+{
+    Console.WriteLine(text);
+}
+</code></pre>
+
+        <h4>Вызов метода</h4>
+        <pre><code>PrintMessage("Привет, мир!");
+</code></pre>
+
+        <h4>Метод с несколькими параметрами</h4>
+        <pre><code>void ShowUserInfo(string name, int age)
+{
+    Console.WriteLine($"Имя: {name}, возраст: {age}");
+}
+
+ShowUserInfo("Аня", 20);
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>4.2. Возвращаемые значения (return)</h3>
+        <p>Метод может возвращать значение, например число или строку.</p>
+
+        <h4>Метод, который возвращает сумму</h4>
+        <pre><code>int Sum(int a, int b)
+{
+    return a + b;
+}
+
+int result = Sum(5, 3);
+Console.WriteLine(result); // 8
+</code></pre>
+
+        <h4>Метод, возвращающий строку</h4>
+        <pre><code>string GetGreeting(string name)
+{
+    return $"Здравствуйте, {name}!";
+}
+
+Console.WriteLine(GetGreeting("Иван"));
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>4.3. Разделение логики по методам (не всё писать в Main)</h3>
+
+        <h4>Плохой подход</h4>
+        <pre><code>static void Main()
+{
+    int a = 5;
+    int b = 7;
+    int sum = a + b;
+    Console.WriteLine(sum);
+}
+</code></pre>
+
+        <h4>Лучший подход — вынести логику в отдельные методы</h4>
+        <pre><code>static void Main()
+{
+    int result = Sum(5, 7);
+    PrintResult(result);
+}
+
+static int Sum(int a, int b)
+{
+    return a + b;
+}
+
+static void PrintResult(int value)
+{
+    Console.WriteLine("Результат: " + value);
+}
+</code></pre>
+
+        <p><strong>Преимущества:</strong></p>
+        <ul>
+          <li>читабельность,</li>
+          <li>повторное использование,</li>
+          <li>легче тестировать,</li>
+          <li>проще сопровождать.</li>
+        </ul>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>4.4. Передача данных между методами</h3>
+        <p>Один метод может передавать данные другому методу через параметры и <code>return</code>.</p>
+
+        <h4>Пример: два метода взаимодействуют</h4>
+        <pre><code>static void Main()
+{
+    int number = ReadNumber();
+    int doubled = DoubleNumber(number);
+    PrintResult(doubled);
+}
+
+static int ReadNumber()
+{
+    return 10;
+}
+
+static int DoubleNumber(int value)
+{
+    return value * 2;
+}
+
+static void PrintResult(int value)
+{
+    Console.WriteLine("Итог: " + value);
+}
+</code></pre>
+
+        <p><strong>Поток данных:</strong> Main → ReadNumber → DoubleNumber → PrintResult</p>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>4.5. Пример мини-программы с методами</h3>
+        <pre><code>static void Main()
+{
+    int a = GetNumber("Введите первое число: ");
+    int b = GetNumber("Введите второе число: ");
+
+    int sum = Sum(a, b);
+
+    PrintResult(sum);
+}
+
+static int GetNumber(string message)
+{
+    Console.Write(message);
+    return int.Parse(Console.ReadLine());
+}
+
+static int Sum(int x, int y)
+{
+    return x + y;
+}
+
+static void PrintResult(int value)
+{
+    Console.WriteLine("Сумма = " + value);
+}
+</code></pre>
+      </section>
+    </section>
+
+    <!-- 5. Основы ООП -->
+    <section id="oop-basics">
+      <h2>5. Основы ООП (минимум)</h2>
+      <p>ООП (объектно-ориентированное программирование) позволяет описывать сущности реального мира как структуры данных (классы) и создавать их экземпляры (объекты). Здесь рассматривается только минимум, нужный для алгоритмических и базовых учебных проектов.</p>
+
+      <section>
+        <h3>5.1. Что такое класс</h3>
+        <p>Класс — это шаблон (чертёж), по которому создаются объекты. Он описывает:</p>
+        <ul>
+          <li>какие данные хранит объект (поля, свойства),</li>
+          <li>какие действия объект может выполнять (методы).</li>
+        </ul>
+
+        <h4>Пример класса</h4>
+        <pre><code>class Person
+{
+    public string Name;
+    public int Age;
+}
+</code></pre>
+        <p>Это чертёж человека: указан набор данных, но реального “человека” пока нет.</p>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>5.2. Что такое объект</h3>
+        <p>Объект — это конкретный экземпляр класса, созданный в памяти.</p>
+
+        <h4>Создание объекта</h4>
+        <pre><code>Person user = new Person();
+user.Name = "Анна";
+user.Age = 20;
+
+Console.WriteLine(user.Name);  // Анна
+</code></pre>
+        <p>Класс — шаблон. Объект — конкретный пример.</p>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>5.3. Поля и свойства</h3>
+        <p><strong>Поля</strong> — хранят данные напрямую.</p>
+        <pre><code>class Product
+{
+    public string Title;
+    public double Price;
+}
+</code></pre>
+
+        <p><strong>Свойства</strong> — более безопасная форма хранения данных (часто используются в реальных проектах).</p>
+        <pre><code>class Product
+{
+    public string Title { get; set; }
+    public double Price { get; set; }
+}
+</code></pre>
+
+        <p>Свойства можно использовать как обычные переменные:</p>
+        <pre><code>Product p = new Product();
+p.Title = "Телефон";
+p.Price = 19999;
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>5.4. Конструктор класса</h3>
+        <p>Конструктор — специальный метод, который вызывается при создании объекта. Он задаёт начальные значения.</p>
+
+        <h4>Пример конструктора</h4>
+        <pre><code>class Student
+{
+    public string Name { get; set; }
+    public int Group { get; set; }
+
+    // Конструктор
+    public Student(string name, int group)
+    {
+        Name = name;
+        Group = group;
+    }
+}
+</code></pre>
+
+        <h4>Создание объекта</h4>
+        <pre><code>Student s = new Student("Иван", 35);
+Console.WriteLine($"{s.Name}, группа {s.Group}");
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>5.5. Простые модели данных</h3>
+        <p>Модель данных — это класс, который описывает сущность предметной области.</p>
+
+        <h4>Пример: модель товара</h4>
+        <pre><code>class Product
+{
+    public string Title { get; set; }
+    public double Price { get; set; }
+}
+</code></pre>
+
+        <h4>Пример: модель задачи</h4>
+        <pre><code>class TaskItem
+{
+    public string Description { get; set; }
+    public bool IsCompleted { get; set; }
+}
+</code></pre>
+
+        <h4>Пример: модель студента</h4>
+        <pre><code>class Student
+{
+    public string FullName { get; set; }
+    public int Course { get; set; }
+}
+</code></pre>
+
+        <p>Такие модели используются:</p>
+        <ul>
+          <li>при работе с коллекциями,</li>
+          <li>при обмене данными,</li>
+          <li>для хранения результатов программ.</li>
+        </ul>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>5.6. Пример мини-программы с ООП</h3>
+        <pre><code>class Program
+{
+    static void Main()
+    {
+        Product apple = new Product("Яблоко", 50);
+        Product banana = new Product("Банан", 60);
+
+        PrintProduct(apple);
+        PrintProduct(banana);
+    }
+
+    static void PrintProduct(Product p)
+    {
+        Console.WriteLine($"{p.Title}: {p.Price} руб.");
+    }
+}
+
+class Product
+{
+    public string Title { get; set; }
+    public double Price { get; set; }
+
+    public Product(string title, double price)
+    {
+        Title = title;
+        Price = price;
+    }
+}
+</code></pre>
+      </section>
+    </section>
+
+    <!-- 6. Работа со строками -->
+    <section id="strings">
+      <h2>6. Работа со строками в C#</h2>
+      <p>Строки (<code>string</code>) — один из самых часто используемых типов данных. В C# строки имеют множество полезных методов для обработки текста.</p>
+
+      <section>
+        <h3>6.1. Основные методы строк</h3>
+
+        <h4>6.1.1. Длина строки — Length</h4>
+        <p>Возвращает количество символов в строке.</p>
+        <pre><code>string text = "Hello";
+int len = text.Length; // 5
+</code></pre>
+
+        <h4>6.1.2. Преобразование регистра</h4>
+        <p><code>ToLower()</code> — весь текст в нижний регистр:</p>
+        <pre><code>string title = "HELLO";
+Console.WriteLine(title.ToLower()); // "hello"
+</code></pre>
+
+        <p><code>ToUpper()</code> — весь текст в верхний регистр:</p>
+        <pre><code>string city = "Moscow";
+Console.WriteLine(city.ToUpper()); // "MOSCOW"
+</code></pre>
+
+        <h4>6.1.3. Проверка содержания — Contains()</h4>
+        <p>Возвращает <code>true</code>, если строка содержит определённый фрагмент.</p>
+        <pre><code>string message = "Добро пожаловать";
+
+bool hasWord = message.Contains("пожа"); // true
+</code></pre>
+        <p>Можно сделать регистронезависимую проверку:</p>
+        <pre><code>bool hasCity = "MOSCOW".ToLower().Contains("mos");
+</code></pre>
+
+        <h4>6.1.4. Разделение строки — Split()</h4>
+        <p>Разделяет строку на части и возвращает массив.</p>
+        <pre><code>string data = "apple,banana,orange";
+string[] fruits = data.Split(',');
+
+foreach (var f in fruits)
+{
+    Console.WriteLine(f);
+}
+
+// apple
+// banana
+// orange
+</code></pre>
+
+        <p>Можно разделять по пробелам:</p>
+        <pre><code>string text = "one two three";
+string[] words = text.Split(' ');
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>6.2. Преобразование строк в числа</h3>
+
+        <h4>6.2.1. int.Parse()</h4>
+        <p>Преобразует строку в <code>int</code>. Если строка содержит не число, программа выдаст ошибку.</p>
+        <pre><code>string input = "123";
+int number = int.Parse(input); // 123
+</code></pre>
+
+        <h4>6.2.2. int.TryParse() (желательно)</h4>
+        <p>Позволяет безопасно преобразовать строку без исключения. Возвращает:</p>
+        <ul>
+          <li><code>true</code>, если преобразование удалось,</li>
+          <li><code>false</code>, если нет.</li>
+        </ul>
+
+        <h4>Пример</h4>
+        <pre><code>string input = "45";
+if (int.TryParse(input, out int value))
+{
+    Console.WriteLine("Число = " + value);
+}
+else
+{
+    Console.WriteLine("Ошибка: это не число");
+}
+</code></pre>
+        <p>Ошибка не вызовет аварийного завершения программы.</p>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>6.3. Пример мини-программы со строками</h3>
+        <pre><code>Console.Write("Введите числа через запятую: ");
+string input = Console.ReadLine();                // "10,20,30"
+
+string[] parts = input.Split(',');                // ["10","20","30"]
+
+int sum = 0;
+
+foreach (string part in parts)
+{
+    if (int.TryParse(part, out int num))
+    {
+        sum += num;
+    }
+}
+
+Console.WriteLine("Сумма = " + sum);
+</code></pre>
+      </section>
+    </section>
+
+    <!-- 7. Основы алгоритмов -->
+    <section id="algorithms">
+      <h2>7. Основы алгоритмов</h2>
+      <p>Алгоритм — это последовательность действий, выполняемых для решения задачи. В рамках базового уровня студенту достаточно понимать идею работы нескольких ключевых алгоритмов: сортировка, поиск и фильтрация данных.</p>
+
+      <section>
+        <h3>7.1. Что такое сортировка</h3>
+        <p>Сортировка — это процесс упорядочивания данных по определённому правилу:</p>
+        <ul>
+          <li>по возрастанию,</li>
+          <li>по убыванию,</li>
+          <li>по алфавиту.</li>
+        </ul>
+        <p>Важно понимать идею, а не конкретные реализации.</p>
+
+        <p><strong>Идея сортировки:</strong></p>
+        <ul>
+          <li>есть набор данных,</li>
+          <li>мы хотим расположить их в порядке от меньшего к большему (или наоборот),</li>
+          <li>алгоритм «переставляет» элементы.</li>
+        </ul>
+
+        <h4>Пример сортировки в C# (сортировка целых чисел)</h4>
+        <pre><code>int[] numbers = { 5, 2, 9, 1 };
+
+Array.Sort(numbers); // сортировка по возрастанию
+
+foreach (int n in numbers)
+{
+    Console.WriteLine(n);
+}
+</code></pre>
+        <p>Результат:</p>
+        <pre><code>1
+2
+5
+9
+</code></pre>
+
+        <p>Список сортировок: Bubble sort, QuickSort, MergeSort — знать не обязательно, только понимать идею.</p>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>7.2. Что такое поиск</h3>
+        <p>Поиск — это нахождение элемента в наборе данных.</p>
+
+        <p><strong>Идея поиска:</strong></p>
+        <ul>
+          <li>есть набор значений,</li>
+          <li>мы ищем нужный элемент,</li>
+          <li>алгоритм проверяет значения одно за другим.</li>
+        </ul>
+
+        <h4>Пример линейного поиска (самый простой вариант)</h4>
+        <pre><code>int[] nums = { 10, 20, 30, 40 };
+int target = 30;
+
+bool found = false;
+
+foreach (int n in nums)
+{
+    if (n == target)
+    {
+        found = true;
+        break;
+    }
+}
+
+Console.WriteLine(found); // true
+</code></pre>
+
+        <p><strong>Что нужно знать:</strong></p>
+        <ul>
+          <li>поиск проверяет элементы,</li>
+          <li>поиск может быть медленным или быстрым,</li>
+          <li>студент должен уметь найти элемент в массиве или списке.</li>
+        </ul>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>7.3. Что такое фильтрация данных</h3>
+        <p>Фильтрация — это выборка элементов, которые подходят под условие.</p>
+
+        <p><strong>Идея фильтрации:</strong></p>
+        <ul>
+          <li>есть коллекция значений,</li>
+          <li>мы выбираем только те элементы, которые удовлетворяют правилу.</li>
+        </ul>
+
+        <p>Например:</p>
+        <ul>
+          <li>выбрать только положительные числа,</li>
+          <li>отобрать строки, содержащие нужное слово,</li>
+          <li>оставить товары с ценой больше 100.</li>
+        </ul>
+
+        <h4>Пример фильтрации списка</h4>
+        <pre><code>List&lt;int&gt; data = new List&lt;int&gt; { 1, -5, 7, 0, 3, -2 };
+
+List&lt;int&gt; positive = data.FindAll(x =&gt; x &gt; 0);
+
+foreach (int n in positive)
+{
+    Console.WriteLine(n);
+}
+</code></pre>
+        <p>Результат:</p>
+        <pre><code>1
+7
+3
+</code></pre>
+
+        <h4>Объединённый пример: сортировка + поиск + фильтрация</h4>
+        <pre><code>List&lt;int&gt; nums = new List&lt;int&gt; { 7, 2, 10, -3, 5 };
+
+// 1. Фильтрация: оставить только положительные
+List&lt;int&gt; positive = nums.FindAll(x =&gt; x &gt; 0);
+
+// 2. Сортировка
+positive.Sort();
+
+// 3. Поиск
+bool hasFive = positive.Contains(5);
+
+Console.WriteLine("Отфильтрованные: " + string.Join(", ", positive));
+Console.WriteLine("Есть ли 5? " + hasFive);
+</code></pre>
+      </section>
+    </section>
+
+    <!-- 8. Простая отладка -->
+    <section id="debugging">
+      <h2>8. Простая отладка (начальный уровень)</h2>
+      <p>Отладка — это процесс поиска и исправления ошибок в программе. Студент должен уметь разбираться в сообщениях компилятора, запускать программу, проверять её работу и исправлять логические ошибки.</p>
+
+      <section>
+        <h3>8.1. Понимание сообщений об ошибках компиляции</h3>
+        <p>При запуске программы компилятор может сообщить об ошибке. Обычно в сообщении указано:</p>
+        <ul>
+          <li>тип ошибки,</li>
+          <li>строка,</li>
+          <li>короткое описание,</li>
+          <li>предполагаемое место, где ошибка возникла.</li>
+        </ul>
+
+        <p>Пример ошибки:</p>
+        <pre><code>error CS1002: ; expected
+</code></pre>
+        <p>Это означает, что пропущена <code>;</code>.</p>
+
+        <p>Пример ошибки:</p>
+        <pre><code>error CS0029: Cannot implicitly convert type 'string' to 'int'
+</code></pre>
+        <p>Значит: пытаешься присвоить строку числу.</p>
+
+        <p>Пример ошибки:</p>
+        <pre><code>error CS0103: The name 'valuee' does not exist in the current context
+</code></pre>
+        <p>Обычно означает: опечатка в имени переменной.</p>
+
+        <p>Важно: компилятор указывает строку примерно — иногда проблема выше.</p>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>8.2. Умение запускать и проверять работу программы</h3>
+        <p>Студент должен:</p>
+        <ul>
+          <li><strong>Запускать программу</strong>
+            <ul>
+              <li>в Visual Studio — кнопка Start или F5;</li>
+              <li>в консоли — <code>dotnet run</code>.</li>
+            </ul>
+          </li>
+          <li><strong>Вводить тестовые данные</strong>
+            <ul>
+              <li>проверять разные случаи: правильные значения, неправильные значения, крайние значения (0, мин/макс).</li>
+            </ul>
+          </li>
+          <li><strong>Читать вывод</strong>
+            <ul>
+              <li>сравнивать фактический результат с ожидаемым.</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>8.3. Исправление логических ошибок</h3>
+        <p>Логическая ошибка — программа компилируется, но работает неправильно.</p>
+
+        <p>Примеры логических ошибок:</p>
+        <p>Ошибка в формуле:</p>
+        <pre><code>int a = 10;
+int b = 5;
+int result = a - b; // хотели сложить — сложили неправильно
+</code></pre>
+
+        <p>Неверное условие:</p>
+        <pre><code>if (age &gt; 18)  // неправильно для "18 лет можно"
+{
+    // ...
+}
+</code></pre>
+
+        <p>Ошибки в цикле:</p>
+        <pre><code>for (int i = 0; i &lt;= 5; i++)
+{
+    // повторит лишний раз
+}
+</code></pre>
+
+        <p>Неверный поиск:</p>
+        <pre><code>if (name.Contains("ivan"))  // забыли сравнение без регистра
+{
+    // ...
+}
+</code></pre>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>8.4. Пример простого процесса отладки</h3>
+
+        <h4>Исходный код (с ошибками)</h4>
+        <pre><code>int a = 10;
+int b = 0;
+
+int result = a / b; // Ошибка: деление на ноль
+
+Console.WriteLine(reslt); // Ошибка: опечатка
+</code></pre>
+
+        <h4>Шаги отладки</h4>
+        <ol>
+          <li>Компилятор сообщает:
+            <pre><code>error CS0103: The name 'reslt' does not exist
+</code></pre>
+            Исправляем <code>reslt</code> → <code>result</code>.
+          </li>
+          <li>Программа падает при запуске:
+            <pre><code>System.DivideByZeroException
+</code></pre>
+            Исправляем логику:
+            <pre><code>if (b != 0)
+    Console.WriteLine(a / b);
+else
+    Console.WriteLine("Ошибка: деление на ноль!");
+</code></pre>
+          </li>
+          <li>Тестируем еще раз.</li>
+        </ol>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>8.5. Использование вывода для поиска ошибок</h3>
+        <p>Студент должен уметь выводить промежуточные значения:</p>
+        <pre><code>Console.WriteLine("Debug: value = " + value);
+</code></pre>
+        <p>Это помогает найти место, где программа работает не так, как ожидалось.</p>
+      </section>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>
