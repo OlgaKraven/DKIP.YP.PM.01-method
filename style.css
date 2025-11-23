@@ -1,0 +1,402 @@
+/* БАЗОВЫЕ НАСТРОЙКИ ----------------------------------------- */
+
+:root {
+  --bg-main: #ffffff;
+  --text-main: #333333;
+  --accent: #e53935;
+  --accent-soft: rgba(229, 57, 53, 0.08);
+  --border-soft: #e0e0e0;
+  --muted: #757575;
+  --code-bg: #f5f5f5;
+  --blockquote-bg: #fafafa;
+  --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+}
+
+/* ОБЩИЙ КОНТЕЙНЕР ДОКУМЕНТА --------------------------------- */
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+/* ССЫЛКИ ---------------------------------------------------- */
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+
+/* ЗАГОЛОВКИ ------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4 {
+  color: #222;
+  margin: 1.6rem 0 0.75rem;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2rem;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  border-left: 4px solid var(--accent);
+  padding-left: 0.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+h4 {
+  font-size: 1.1rem;
+  color: #444;
+}
+
+/* АБЗАЦЫ, СПИСКИ -------------------------------------------- */
+
+p {
+  margin: 0.5rem 0 1rem;
+}
+
+ul,
+ol {
+  margin: 0.5rem 0 1rem 1.5rem;
+  padding: 0;
+}
+
+li + li {
+  margin-top: 0.25rem;
+}
+
+/* НАВИГАЦИЯ МЕЖДУ ФАЙЛАМИ ---------------------------------- */
+/* верхнее/главное меню, отличие по фону и виду */
+
+.nav-files {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fafafa;
+  border-bottom: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.nav-files__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-files a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.nav-files a:hover,
+.nav-files a:focus,
+.nav-files a[aria-current="page"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* НАВИГАЦИЯ ПО ТЕМАМ ВНУТРИ ДОКУМЕНТА ---------------------- */
+/* боковая / блочная, визуально другая */
+
+.nav-topics {
+  margin: 1.5rem 0 2rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-soft);
+  background: #fcfcfc;
+}
+
+.nav-topics__title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.nav-topics ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-topics li + li {
+  margin-top: 0.25rem;
+}
+
+.nav-topics a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  border-radius: 0.35rem;
+  transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+}
+
+.nav-topics a::before {
+  content: "•";
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.nav-topics a:hover,
+.nav-topics a:focus {
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding-left: 0.2rem;
+}
+
+/* ТАБЛИЦЫ ДЛЯ КОНСПЕКТОВ И НАВИГАЦИИ ----------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+th,
+td {
+  border: 1px solid var(--border-soft);
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+}
+
+th {
+  background: #f5f5f5;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* базовая «зебра» */
+tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+tbody tr:nth-child(even) {
+  background: #fcfcfc;
+}
+
+/* НАВИГАЦИОННЫЕ ТАБЛИЦЫ (оглавление и т.п.) */
+/* подсветка строки при наведении */
+
+.table-nav tbody tr {
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.table-nav tbody tr:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* КОД, СКРИПТЫ, ВСТАВКИ В СТИЛЕ MARKDOWN ------------------- */
+
+code,
+pre,
+kbd {
+  font-family: "Fira Code", "JetBrains Mono", Consolas, Monaco, monospace;
+}
+
+/* inline code: `code` */
+code {
+  background: var(--code-bg);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+  border: 1px solid #e0e0e0;
+}
+
+/* блок кода: ``` */
+pre {
+  background: var(--code-bg);
+  border-radius: 0.5rem;
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  margin: 1rem 0 1.5rem;
+}
+
+pre code {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+/* специальные блоки для «скриптов» (псевдо-скрипты/инструкции) */
+
+.script-block {
+  position: relative;
+  margin: 1.25rem 0;
+  padding: 0.75rem 1rem 0.75rem 0.9rem;
+  border-left: 4px solid var(--accent);
+  background: #fff7f7;
+  border-radius: 0.5rem;
+  font-family: "Fira Code", "JetBrains Mono", Consolas, monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.script-block::before {
+  content: "SCRIPT";
+  position: absolute;
+  top: 0.4rem;
+  right: 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ПОМЕТКИ / ВЫДЕЛЕНИЯ КАК В MARKDOWN ----------------------- */
+
+blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--blockquote-bg);
+  border-radius: 0.5rem;
+  color: #444;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Общий класс заметки */
+.note {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-soft);
+  background: #fafafa;
+  font-size: 0.95rem;
+}
+
+/* Варианты заметок */
+.note--info {
+  border-color: #2196f3;
+  background: #e3f2fd;
+}
+
+.note--warning {
+  border-color: #ffb300;
+  background: #fff8e1;
+}
+
+.note--danger {
+  border-color: var(--accent);
+  background: #ffebee;
+}
+
+/* Заголовок заметки (опционально) */
+.note__title {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+/* Выделение текста */
+mark {
+  background: #fff59d;
+  padding: 0 0.1rem;
+}
+
+/* Теги/метки в тексте */
+.tag {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: #f5f5f5;
+  color: var(--muted);
+}
+
+/* Разделители */
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-soft);
+  margin: 2rem 0;
+}
+
+/* АДАПТИВНОСТЬ ---------------------------------------------- */
+
+@media (max-width: 640px) {
+  .page {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .nav-files__inner {
+    padding-inline: 1rem;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    font-size: 0.9rem;
+  }
+}
+.figure {
+  margin: 1.5rem auto;
+  text-align: center;
+}
+
+.figure img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
