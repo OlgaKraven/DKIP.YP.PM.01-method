@@ -70,6 +70,16 @@ public partial class MainWindow : Window
         dateValidationFailed = false;
         RefreshCards();
     }
+    private void Date_CalendarClosed(object sender, RoutedEventArgs e)
+    {
+        // Повторный выбор того же дня не вызывает SelectedDateChanged.
+        // Закрытие календаря подтверждает показанную действительную дату.
+        if (CalculationDate.SelectedDate is not null
+            && DateTime.TryParse(CalculationDate.Text, Ru, DateTimeStyles.None, out var date)
+            && date.Date == CalculationDate.SelectedDate.Value.Date)
+            dateValidationFailed = false;
+        RefreshCards();
+    }
     private void Date_Editing(object sender, System.Windows.Input.KeyEventArgs e)
     {
         if (e.Key != System.Windows.Input.Key.Tab && e.Key != System.Windows.Input.Key.Enter)

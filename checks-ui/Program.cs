@@ -50,6 +50,12 @@ internal static class WindowChecks
             var recalculate=typeof(MainWindow).GetMethod("Recalculate_Click",BindingFlags.Instance|BindingFlags.NonPublic)!;
             recalculate.Invoke(win,[win,new RoutedEventArgs()]);
             Check("Invalid date text clears stale results",Cards().Length==0 && status.Text.Contains("дату"));
+            // WPF may restore the displayed valid day after rejecting typed text.
+            // Selecting that same day does not raise SelectedDateChanged.
+            picker.Text="15.01.2027";
+            var calendarClosed=typeof(MainWindow).GetMethod("Date_CalendarClosed",BindingFlags.Instance|BindingFlags.NonPublic)!;
+            calendarClosed.Invoke(win,[picker,new RoutedEventArgs()]);
+            Check("Same-day calendar selection recovers after invalid input",Cards().Length==4 && Card(0).Price==4000m);
             picker.SelectedDate=null;
             picker.Text="15.01.2027";
             picker.SelectedDate=new DateTime(2027,1,15);

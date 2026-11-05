@@ -4,7 +4,7 @@
     <Border Grid.Row="1" Background="#D2F6E7" CornerRadius="10" Padding="16" Margin="0,0,0,16">
       <DockPanel LastChildFill="False"><Button DockPanel.Dock="Right" Content="Открыть данные…" Click="OpenData_Click" Background="White" BorderBrush="#427864" AutomationProperties.Name="Открыть данные"/>
         <StackPanel Orientation="Horizontal"><Label Content="Дата _расчёта" Target="{Binding ElementName=CalculationDate}" VerticalAlignment="Center"/>
-          <DatePicker x:Name="CalculationDate" Width="150" VerticalContentAlignment="Center" Margin="8,0,12,0" SelectedDateChanged="Date_Changed" DateValidationError="Date_Invalid" PreviewKeyDown="Date_Editing" AutomationProperties.Name="Дата расчёта"/>
+          <DatePicker x:Name="CalculationDate" Width="150" VerticalContentAlignment="Center" Margin="8,0,12,0" SelectedDateChanged="Date_Changed" CalendarClosed="Date_CalendarClosed" DateValidationError="Date_Invalid" PreviewKeyDown="Date_Editing" AutomationProperties.Name="Дата расчёта"/>
           <Button Content="Пересчитать" Click="Recalculate_Click" Background="#70B2AF" BorderBrush="#427864" AutomationProperties.Name="Пересчитать"/></StackPanel>
       </DockPanel>
     </Border>
