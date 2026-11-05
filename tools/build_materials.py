@@ -4,6 +4,7 @@ import csv
 import html
 import io
 import json
+import re
 import shutil
 import textwrap
 import zipfile
@@ -12,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = 'https://olgakraven.github.io/DKIP.YP.PM.01-method/'
 OUT = ROOT / 'downloads'
 OUT.mkdir(exist_ok=True)
+ZIP_BEFORE={p.name:p.read_bytes() for p in OUT.glob('*.zip')}
 for folder in ['content', 'data', 'data/errors', 'assets', 'docs']:
     (ROOT / folder).mkdir(parents=True, exist_ok=True)
 
@@ -138,16 +140,16 @@ page('1.1. Правила расчёта и отображения',
 page('1.2. Проверки и сдача',
  b('Функциональные проверки','Проверить товар с заказом в прошлом месяце, товар с заказом только в текущем месяце, товар без заказов в прошлом месяце и округление. Проверить даты 01.01.2027 и 01.02.2027, переход февраля високосного года, остатки 3, 4, 5 и 6, пустую историю и повторный расчёт.'),
  b('Ошибочные данные','Открыть предоставленные файлы с отсутствующей датой заказа и отрицательной ценой. Убедиться, что приложение показывает причину отказа, очищает прежний каталог и позволяет снова открыть исправный файл. Проверить несуществующую дату и пустое поле даты. Не показывать старый расчёт как результат неверного ввода.'),
- b('Состав проекта','Представить исходный проект WPF с Pricing.cs, собственный catalog.json, картинку-заглушку и README с порядком запуска. Не включать в репозиторий bin и obj. Передать принимающей практике сигнатуры методов, смысл полей и контрольные примеры; повторная реализация алгоритма не требуется.'),
+ b('Состав проекта','Представить исходный проект WPF с Pricing.cs, собственный catalog.json, картинку-заглушку и README с порядком запуска. Не включать в репозиторий bin и obj. Описать в README сигнатуры методов, смысл полей и контрольные примеры для проверки проекта.'),
  b('Состав отчёта','Включить название и номер области, краткое условие, словарь полей, схему алгоритма, объяснение границ месяца, структуру проекта, таблицу испытаний и снимки реального окна. В таблице указать исходный файл, дату, код товара, действие, ожидаемое значение, фактическое значение и вывод. Разместить доступную проверяющему ссылку на репозиторий непосредственно в отчёте.'),
  b('Документы практики','Подготовить отчёт и презентацию по шаблонам карточки EatDoners. Приложить индивидуальное задание и аттестационный лист из этой же карточки. Формы не пересоздавать вручную. Сроки и подписантов брать из выданных форм.')),
 ]
 files=page('2. Файлы для работы',
  b('Стартовый проект','Скачать starter.zip: '+SITE+'downloads/starter.zip. Распаковать один раз в папку своей практики. В нём находится собираемое окно с незавершённым Pricing.cs. В начале работы появится сообщение о необходимости реализовать модуль.'),
  b('Данные области','Скачать архив vNN.zip своей области из списка вариантов. Заменить app/Data/catalog.json его файлом catalog.json до реализации. expected.csv содержит контрольные значения для четырёх товаров на 15.01.2027; вывести ожидания самостоятельно и сверить с таблицей.'),
- b('Ошибочные и граничные случаи','Скачать data.zip: '+SITE+'downloads/data.zip. Архив содержит все области и папку data/errors. Ошибочные файлы открывать кнопкой «Открыть данные…» в уже работающем приложении, не подменяя ими исходный исправный набор. Для високосной проверки использовать вход, подробно описанный в этапе 3.9.'),
+ b('Ошибочные и граничные случаи','Скачать errors.zip: '+SITE+'downloads/errors.zip. Архив содержит только папку data/errors с пятью ошибочными файлами. Ошибочные файлы открывать кнопкой «Открыть данные…» в уже работающем приложении, не подменяя ими исходный исправный набор. Для високосной проверки использовать вход, подробно описанный в этапе 3.9.'),
  b('Готовый пример для сверки','Скачать reference.zip: '+SITE+'downloads/reference.zip. Архив содержит законченное приложение области «Линия». Открыть его исходники для объяснения приёма или сравнения после собственной попытки. Это самостоятельный путь сверки, а не второе обязательное задание.'),
- b('Формы отчёта','Основа отчёта: '+SITE+'downloads/report-template.md. Таблица испытаний: '+SITE+'downloads/tests-template.csv. Официальные формы документов и презентации получить в карточке EatDoners.'))
+ b('Формы отчёта','Чистая форма отчёта: '+SITE+'downloads/Отчет%20о%20выполнении.docx. Таблица испытаний: '+SITE+'downloads/tests-template.csv. Официальные формы документов и презентации получить в карточке EatDoners.'))
 
 guide=[
 page('3. Методические рекомендации: рабочая область',
@@ -198,7 +200,7 @@ page('3.7. Подготовить карточки и связать с окно
  b('Проверка связи','Сохранить Pricing.cs, собрать и запустить собственный проект. Должны появиться четыре карточки собственной области. Изменить дату на 01.02.2027: январский заказ второй модели теперь отключает её скидку. Вернуть 15.01.2027: цены должны восстановиться. Если карточки не появились, сначала прочитать нижнее сообщение, затем первую ошибку сборки.')),
 page('3.8. Проверить окно и обычные случаи',
  b('Данные и внешний вид','Сверить заголовок организации, имена четырёх моделей, производителя и материал со своим JSON. Сверить картинку-заглушку: файл Assets/picture.png копируется проектом в каталог запуска. В учебных наборах товарные фотографии отсутствуют; для всех карточек используется заглушка. Цвета и Calibri уже заданы в оболочке.'),
- b('Окно образца','На рис. 1 показан запущенный образец «Линия» на 15.01.2027. Первая карточка имеет базовую цену 1000 руб., вторая — цену со скидкой 900 руб. У собственного варианта отличаются организация, товары и суммы.','image',path='assets/application.jpg'),
+ b('Окно образца','Показан запущенный образец «Линия» на 15.01.2027. Первая карточка имеет базовую цену 1000 руб., вторая — цену со скидкой 900 руб. У собственного варианта отличаются организация, товары и суммы.','image',path='assets/application.jpg'),
  b('Испытания каталога','На 15.01.2027 сверить итоговые цены с expected.csv. Для каждой строки указать код товара, декабрьские факты истории и причину наличия или отсутствия скидки. Сверить сумму двух исполнений. В отдельные строки отчёта записать остатки 3, 4, 5 и 6 с ожидаемой подписью и подсветкой.'),
  b('Управление','Нажатием Tab последовательно перейти к дате и кнопкам. Выбрать дату календарём или ввести ДД.ММ.ГГГГ, затем нажать «Пересчитать». Уменьшить окно до минимального размера и прокрутить каталог вниз. Убедиться, что последняя карточка и строка состояния доступны, а цены и причины читаются.'),
  b('Доказательство','Сохранить снимок собственного окна с верхними карточками, отдельный снимок карточки с остатком 3 и таблицу проверок. Снимок готового примера не подтверждает работу собственного варианта.')),
@@ -210,20 +212,42 @@ page('3.9. Проверить границы, ошибки и повтор',
  b('Повтор и отладка','Дважды нажать «Пересчитать» с одинаковой датой. Итоги не должны уменьшаться повторно. Закрыть и снова открыть приложение: исходные даты и цены восстанавливаются из файла. При расхождении поставить точку останова в Calculate: сверить productId, start/end и hasOrders, затем множитель и округление. Исправить причину и повторить ту же строку испытания.')),
 page('3.10. Подготовить передачу и сдачу',
  b('Проверить комплект проекта','Закрыть окно. Открыть копию своего проекта в новой папке и выполнить сборку и запуск по README. Проверить наличие Data/catalog.json и Assets/picture.png. Описать в README Windows, SDK, путь проекта, команды запуска и назначение Pricing.cs. Удалять собственные исходники ради чистой сборки не требуется.'),
- b('Передать программный модуль','Передать Pricing.cs и Models.cs вместе с проектом. Указать Calculate(basePrice, productId, orders, asOf), StockSummary(stocks), CreateCard(product, orders, asOf). Описать цены в рублях, даты без времени, код модели и условие предыдущего календарного месяца. В приложении с БД сформировать OrderLine из запроса и вызвать тот же модуль; алгоритм не копировать в SQL или обработчик окна.'),
- b('Оформить отчёт','Заполнить report-template.md или перенести его содержание в выданную пояснительную записку. Поместить прямую ссылку на собственный репозиторий в текст отчёта. Заполнить tests-template.csv: ожидания определить по данным до запуска, факт записать после. Приложить схему алгоритма и настоящие снимки окна.'),
+ b('Передать программный модуль','Включить Pricing.cs и Models.cs в сдаваемый проект. Указать Calculate(basePrice, productId, orders, asOf), StockSummary(stocks), CreateCard(product, orders, asOf). Описать цены в рублях, даты без времени, код модели и условие предыдущего календарного месяца. Пояснить вызов модуля из предоставленного окна; алгоритм хранить в Pricing.cs, без копирования в обработчик кнопки.'),
+ b('Оформить отчёт','Заполнить отдельную форму «Отчет о выполнении.docx». Сохранить её имя; ответы, таблицу испытаний и собственные рисунки внести в подготовленные места. Пояснительную записку из карточки сохранить как отдельный официальный документ. Поместить прямую ссылку на собственный репозиторий в текст отчёта. Заполнить tests-template.csv: ожидания определить по данным до запуска, факт записать после. Приложить схему алгоритма и настоящие снимки окна.'),
  b('Проверить документы','Получить из карточки EatDoners индивидуальное задание, аттестационный лист и шаблоны отчёта и презентации. Указать собственную область, результат, границы месяца, ключевые испытания и ссылку на проект. Проверить, что ссылки открываются проверяющему, таблицы читаются, а изображённые даты и цены соответствуют данным своего варианта.'),
- b('Признак готовности','Сдан один проект собственной области; он открывается отдельным окном и рассчитывает цены по выбранной дате. Проверки подтверждают обычные, ошибочные, граничные и повторные случаи. Принимающая практика получает модуль и данные его контракта.')),
+ b('Признак готовности','Сдан один проект собственной области; он открывается отдельным окном и рассчитывает цены по выбранной дате. Проверки подтверждают обычные, ошибочные, граничные и повторные случаи. README содержит контракт модуля и порядок запуска из чистой копии.')),
 page('4. Источники для углубления',
  b('Среда и проект','Microsoft. .NET 10 SDK для Windows. https://dotnet.microsoft.com/download/dotnet/10.0 (дата обращения: 03.11.2026). Microsoft Learn. MSBuild properties for Microsoft.NET.Sdk.Desktop. https://learn.microsoft.com/dotnet/core/project-sdk/msbuild-props-desktop (дата обращения: 03.11.2026).'),
  b('Дата и деньги','Microsoft Learn. DateOnly.AddMonths. https://learn.microsoft.com/dotnet/api/system.dateonly.addmonths (дата обращения: 03.11.2026). Microsoft Learn. Math.Round. https://learn.microsoft.com/dotnet/api/system.math.round (дата обращения: 03.11.2026). Основные необходимые приёмы объяснены в этой методичке; внешние ссылки используются для углубления.'))
 ]
+
+files['blocks'].append(b('Тестовый проект', 'Скачать tests.zip: '+SITE+'downloads/tests.zip. Это отдельный проект автоматических проверок, без готового Pricing.cs. После собственной реализации распаковать checks в папку рядом с app. Выполнить из этой папки dotnet run --project checks/PricingChecks.csproj -- . . Архив включает data/demo и ошибочные файлы; добавить свой data/vNN/catalog.json из назначенного архива. При успехе последняя строка сообщает число проверок. При ошибке сравнить первое «ожидалось / получено» с собственным ручным расчётом и повторить ту же проверку. Внешние пакеты тестирования не нужны.'))
+files['blocks'].append(b('Данные образца', 'Данные «Линии» входят в стартовый и готовый проекты: app/Data/catalog.json. Свой набор скачивается только отдельным vNN.zip. Архив всех областей для выполнения не нужен.'))
+guide[1]['blocks'].insert(2,b('Рабочая папка и терминал','В Проводнике создать папку UP01 и открыть её. Включить «Вид → Показать → Расширения имён файлов». Правой кнопкой по starter.zip выбрать «Извлечь всё», открыть извлечённую папку: внутри должны лежать app и README.md. В пустом месте этой папки выбрать «Открыть в Терминале». Команды выполнять здесь, не внутри app. Для копирования JSON открыть vNN.zip, извлечь catalog.json и скопировать в app/Data, подтвердив замену. Если меню терминала отсутствует, открыть PowerShell и выполнить Set-Location -LiteralPath с полным путём этой папки в кавычках.'))
+guide[1]['blocks'].append(b('Первое окно заготовки','Данные уже загружены, но карточек ещё нет: требуется реализовать Pricing.cs. Заголовок и сообщение позволяют отличить заготовку от ошибки чтения JSON.','image',path='assets/screens/starter.jpg'))
+guide[1]['blocks'].append(b('Если проект не собирается','Сообщение «dotnet не является командой» означает отсутствие SDK или старый терминал после установки. Закрыть терминал, открыть заново и выполнить dotnet --list-sdks. Ошибка MSB1009 означает неверную папку или путь проекта: в текущей папке должна быть app/CatalogDesk.csproj. При ошибке C# читать первую строку с error и имя файла; проверить скобки заменённого метода. После каждого исправления повторять dotnet build app/CatalogDesk.csproj.'))
+def image_after(title,name,caption):
+    page=next(p for p in guide if p['title'].startswith(title))
+    page['blocks'].append(b({'month-feb':'Смена календарного месяца','low-stock':'Нижние карточки и остаток 3'}[name],caption,'image',path='assets/screens/'+name+'.jpg'))
+image_after('3.7.','month-feb','Смена месяца: на 01.02.2027 у «Линии» первая цена 750,00, вторая 1200,00; период — январь. Сравнить с исходным декабрём.')
+image_after('3.8.','low-stock','Прокрутка вниз показывает остаток 3 и цену 7,52. Одна красная карточка не заменяет проверку порогов 4, 5 и 6.')
+g=next(p for p in guide if p['title'].startswith('3.9.'))
+g['blocks'].insert(0,b('Открыть другой файл','В работающем окне нажать «Открыть данные…». В поле «Имя файла» стандартного диалога ввести полный путь нужного JSON, затем нажать «Открыть». Для исправного набора это app/Data/catalog.json своего проекта; для ошибки — data/errors/missing-date.json из извлечённого errors.zip. Кнопка «Отмена» оставляет текущий набор. На снимке показано место ввода пути; на компьютере использовать свою папку.'))
+g['blocks'].insert(1,b('Диалог выбора данных','Поле «Имя файла» задаёт конкретный JSON. Сначала проверить путь и имя, затем открыть файл.','image',path='assets/screens/open-file.jpg'))
+g['blocks'].append(b('Ошибочная дата','После ввода 31.02.2027 и нажатия «Пересчитать» поле DatePicker может вернуть прежнюю дату. Пустой каталог и подсказка снизу означают отказ: старые суммы не принимаются за новый расчёт. Для восстановления выбрать календарём действительную дату.','image',path='assets/screens/invalid-date.jpg'))
+g['blocks'].append(b('Ошибка входных данных','Файл missing-date.json отвергнут: внизу названа отсутствующая дата; старые карточки очищены.','image',path='assets/screens/missing-date.jpg'))
+g['blocks'].append(b('Восстановление своего варианта','После отказа открыт исправный catalog.json варианта 07: заголовок «Синий лист», четыре собственных товара, первая цена 1700,00 на 15.01.2027. Другой вариант сверять по его JSON.','image',path='assets/screens/recovery-v07.jpg'))
+g['blocks'].insert(4,b('Точное изменение JSON','Закрыть приложение перед изменением копий. В Проводнике скопировать свой catalog.json дважды рядом с ним; назвать копии leap.json и empty-history.json с видимым расширением .json. Открыть копию в Блокноте через «Открыть с помощью». В leap.json заменить значение controlDate на "2028-03-01", а весь массив orders от [ до ] — на [{"productId":"VNN-01","date":"2028-02-29"}], подставив реальный первый код своей области. Запятые между свойствами сохранить. В empty-history.json заменить только массив orders на [], дату оставить 2027-01-15. Сохранить Ctrl+S; открыть копию кнопкой окна. При ошибке JSON сверить скобки, двойные кавычки и запятые, не менять исходный catalog.json.'))
+g['blocks'].append(b('Високосный случай','Собственный leap.json варианта 07: период 01.02.2028–29.02.2028. Первая модель без скидки, у второй — скидка.','image',path='assets/screens/leap-v07.jpg'))
+g['blocks'].append(b('Пустая история','Собственный empty-history.json варианта 07: все товары со скидкой, первая цена 1275,00. Вернуть исходный JSON и дважды пересчитать; исходные суммы должны повториться.','image',path='assets/screens/empty-v07.jpg'))
+next(p for p in guide if p['title'].startswith('3.10.'))['blocks'].insert(0,b('Сохранить исходники и опубликовать проект','Создать .gitignore в корне проекта с двумя строками bin/ и obj/. Если используется GitHub Desktop: File → Add local repository → выбрать папку проекта; если репозитория ещё нет, выбрать create a repository here, проверить Local path и создать. На вкладке Changes убедиться, что есть app/Pricing.cs, Data/catalog.json, Assets/picture.png и README.md, а bin/obj отсутствуют. Ввести краткое описание и нажать Commit to main, затем Publish repository. Задать имя своего проекта и доступ, позволяющий преподавателю открыть ссылку; нажать Publish. Через Repository → View on GitHub скопировать адрес и внести в раздел 3 отчёта. Открыть ссылку без своей авторизации или проверить доступ преподавателя; ссылка на главную github.com без имени проекта не подходит. Если проект уже в Git, использовать его обычный порядок Commit и Push.'))
 
 areas=[]
 for i,d in enumerate(DOMAINS,1):
     c=sets[i][1]; rows=c['products']; prefix=f'V{i:02d}'
     inventory='; '.join(f"{p['id']} — {p['name']}, {p['basePrice']:.2f} руб., исполнения {p['stocks'][0]['label']} / {p['stocks'][1]['label']}, остатки {p['stocks'][0]['quantity']} + {p['stocks'][1]['quantity']}" for p in rows)+'.'
     areas.append(page(f'Вариант {i:02d} · {d[0]}',
+      b('Скачать стенд своего варианта',f'Скачать только v{i:02d}.zip: '+SITE+f'downloads/v{i:02d}.zip. Для оболочки использовать отдельный starter.zip из методички. Сохранить catalog.json и expected.csv этой области; архивы других вариантов не нужны.'),
       b('Собственная работа',f"Разработать приложение организации «{d[1]}». Предметная область: {d[0].lower()}. Исполнения и фасовки каждого товара указаны ниже и в stocks[].label. Использовать data/v{i:02d}/catalog.json из архива v{i:02d}.zip. Образец «Линия» показывает способ, его товары и цены не переносить."),
       b('Исходные товары',inventory),
       b('1. Подготовить данные',f"Распаковать starter.zip в собственную папку. Заменить app/Data/catalog.json файлом v{i:02d}.zip. В JSON найти коды {prefix}-01…{prefix}-04, четыре строки истории и controlDate=2027-01-15. Если собственная рабочая копия уже подготовлена, проверить её совпадение с этим набором, не начинать второй проект."),
@@ -237,31 +261,9 @@ course=dict(schema_version=2,meta=dict(title='Учебная практика П
     practice_type='up',specialty_code='09.02.07',qualification='prog',academic_year='2026-2027',site_url=SITE),
     demonstration=dict(title='Магазин материалов для скетчинга «Линия»',description='Каталог и календарная цена в приложении WPF.'),
     assignment=assignment,guide=[files]+guide,areas=areas,code_files=[],
-    downloads=[dict(id=p,label=l,url=SITE+'downloads/'+p) for p,l in [('starter.zip','Стартовый проект'),('reference.zip','Готовый пример для сверки'),('data.zip','Все исходные данные'),('assignment.pdf','Методические рекомендации'),('guide.pdf','Предметные области')]])
+    downloads=[dict(id=p,label=l,url=SITE+'downloads/'+p) for p,l in [('starter.zip','Стартовый проект'),('reference.zip','Готовый пример для сверки'),('errors.zip','Ошибочные данные'),('assignment.pdf','Методические рекомендации'),('guide.pdf','Предметные области')]])
 write_json(ROOT/'content/course.json',course)
-(ROOT/'downloads/report-template.md').write_text('''# Отчёт по УП ПМ.01
-
-## 1. Предметная область
-Номер и название области, организация, назначение приложения.
-Ссылка на репозиторий проекта, доступная проверяющему: …
-
-## 2. Исходные данные
-Словарь полей, связь модели с исполнениями и фактами заказов.
-Использованный файл и контрольная дата.
-
-## 3. Разработка модуля
-Схема алгоритма, границы предыдущего календарного месяца, правило округления.
-Назначение методов и связь с WPF. Сохраняемые данные и вычисляемые значения.
-
-## 4. Испытания
-Таблица: файл; дата; товар; действие; ожидание; факт; вывод.
-Успех, границы, округление, ошибка, восстановление, повтор.
-Настоящие снимки собственного приложения с подписями.
-
-## 5. Передача
-Среда и запуск, сигнатуры и смысл параметров, контрольные примеры.
-Вывод о выполненных требованиях и оставшихся ограничениях.
-''',encoding='utf-8', newline='\n')
+(OUT/'report-template.md').write_text('# Форма отчёта\n\nЗаполнить [Отчет о выполнении.docx]('+SITE+'downloads/Отчет%20о%20выполнении.docx). Это единая форма с пустыми полями и местами собственных рисунков.\n',encoding='utf-8')
 (OUT/'tests-template.csv').write_text('Файл;Дата расчёта;Код товара;Действие;Ожидаемый результат;Фактический результат;Вывод\n',encoding='utf-8-sig', newline='\n')
 
 STUB='''namespace CatalogDesk;
@@ -291,22 +293,42 @@ project_zip('starter.zip',True);project_zip('reference.zip')
 with zipfile.ZipFile(OUT/'data.zip','w',zipfile.ZIP_DEFLATED) as z:
     for p in (ROOT/'data').rglob('*'):
         if p.is_file():z.write(p,p.relative_to(ROOT).as_posix())
+with zipfile.ZipFile(OUT/'errors.zip','w',zipfile.ZIP_DEFLATED) as z:
+    for p in sorted((ROOT/'data/errors').glob('*.json')):z.write(p,p.relative_to(ROOT).as_posix())
+with zipfile.ZipFile(OUT/'tests.zip','w',zipfile.ZIP_DEFLATED) as z:
+    for p in sorted((ROOT/'checks').glob('*')):
+        if p.is_file():z.write(p,p.relative_to(ROOT).as_posix())
+    for folder in ['demo','errors']:
+        for p in sorted((ROOT/'data'/folder).glob('*')):z.write(p,p.relative_to(ROOT).as_posix())
+    z.writestr('README.md','Распаковать рядом с app собственного проекта. Добавить data/vNN/catalog.json своего варианта. Выполнить из папки с app, checks и data: dotnet run --project checks/PricingChecks.csproj -- .\nПри ошибке сверить первое ожидалось/получено. Исправить модуль и повторить.\n')
 for i in range(1,31):
     with zipfile.ZipFile(OUT/f'v{i:02d}.zip','w',zipfile.ZIP_DEFLATED) as z:
         for p in (ROOT/'data'/f'v{i:02d}').iterdir():z.write(p,p.name)
 
-CSS='''@font-face{font-family:Golos;src:url(assets/GolosText-variable.ttf)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f4f4f6;color:#1c1c1c;font:16px/1.65 Golos,Arial,sans-serif}a{color:#a50b12;text-underline-offset:3px}a:focus-visible,button:focus-visible{outline:3px solid #ed131c;outline-offset:4px}nav{max-width:1060px;margin:auto;padding:16px 24px;display:flex;gap:20px;flex-wrap:wrap}main{max-width:1060px;margin:auto;background:white;padding-bottom:32px}header{background:#1c1c1c;color:white;padding:36px 40px;border-bottom:6px solid #ed131c}header p{max-width:65ch}h1{font-size:36px;line-height:1.18;margin:8px 0 18px}h2{font-size:26px;line-height:1.25;margin:0 0 20px}h3{font-size:19px;line-height:1.35;margin:0 0 10px}section{padding:30px 32px 6px;scroll-margin-top:16px}.route{list-style:none;padding:0;counter-reset:stage}.route>li{counter-increment:stage;display:grid;grid-template-columns:38px minmax(0,1fr);gap:14px;margin:0 0 18px;position:relative}.route>li:before{content:counter(stage);border:1.5px solid #ed131c;border-radius:50%;width:32px;height:32px;display:grid;place-items:center;margin-top:16px;background:white;z-index:1}.route>li:not(:last-child):after{content:'';position:absolute;width:1px;background:#dfe1e5;top:52px;bottom:-18px;left:16px}.card{overflow-wrap:anywhere;padding:20px 24px;background:#f4f4f6;border-radius:14px;min-width:0}p{margin:0 0 10px}p:last-child{margin-bottom:0}pre{font:13px/1.6 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}.links{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.links a{padding:10px 14px;border:1px solid #b8bcc3;border-radius:8px;display:inline-block;background:white}.toc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;list-style:none;padding:0}.toc li{background:#f4f4f6;padding:12px 16px;border-radius:8px}footer{max-width:1060px;margin:auto;padding:20px 32px} @media(max-width:650px){h1{font-size:29px}header{padding:26px 22px}section{padding:24px 16px 0}.card{padding:18px}.route>li{gap:8px;grid-template-columns:32px minmax(0,1fr)}.toc{grid-template-columns:1fr}} @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}} @media print{body{background:white;font:14pt/1.5 'Times New Roman',serif;color:black}nav,.screen-only{display:none}main{max-width:none}header{background:white;color:black;border:0;padding:0}h1,h2,h3{color:black}h1,h2{font-size:16pt;text-align:center}section{padding:0}.route>li{display:block;break-inside:avoid}.route>li:before,.route>li:after{display:none}.card{background:white;padding:0}pre{font-size:10pt}a{color:black}.toc{display:block}@page{size:A4;margin:20mm 20mm 20mm 30mm}}'''
+for name,raw in ZIP_BEFORE.items():
+    with zipfile.ZipFile(io.BytesIO(raw)) as old,zipfile.ZipFile(OUT/name) as new:
+        if {n:old.read(n) for n in old.namelist()}=={n:new.read(n) for n in new.namelist()}:(OUT/name).write_bytes(raw)
+
+CSS=(ROOT/'tools/approved.css').read_text(encoding='utf-8')
 (ROOT/'style.css').write_text(CSS,encoding='utf-8', newline='\n')
+def prose(text):
+    escaped=html.escape(text)
+    return re.sub(r'https://[^\s<]+',lambda m:'<a href="'+m[0].rstrip('.;,')+'">'+m[0].rstrip('.;,')+'</a>'+m[0][len(m[0].rstrip('.;,')):],escaped)
+
+FIGURE=0
 def render_page(p,anchor):
+    global FIGURE
     blocks=''
     for x in p['blocks']:
-        content='<pre>'+html.escape(x['text'])+'</pre>' if x['kind']=='code' else ''.join('<p>'+html.escape(t)+'</p>' for t in x['text'].split('\n\n'))
-        if x['kind']=='image':content+='<figure style="margin:16px 0"><img src="'+x['path']+'" alt="Окно каталога «Линия» с ценами на 15.01.2027" style="display:block;width:100%;height:auto"><figcaption>Рисунок 1 — Окно каталога и календарной цены</figcaption></figure>'
+        content='<pre>'+html.escape(x['text'])+'</pre>' if x['kind']=='code' else ''.join('<p>'+prose(t)+'</p>' for t in x['text'].split('\n\n'))
+        if x['kind']=='image':
+            FIGURE+=1
+            content+='<figure style="margin:16px 0"><img src="'+x['path']+'" alt="'+html.escape(x["title"])+'" style="display:block;width:100%;height:auto"><figcaption>Рисунок '+str(FIGURE)+' — '+html.escape(x['title'])+'</figcaption></figure>'
         blocks+='<li><div class="card"><h3>'+html.escape(x['title'])+'</h3>'+content+'</div></li>'
-    return '<section id="'+anchor+'"><h2>'+html.escape(p['title'])+'</h2><ol class="route">'+blocks+'</ol></section>'
+    return '<section id="'+anchor+'"><header><h2>'+html.escape(p['title'])+'</h2></header><ol class="route">'+blocks+'</ol></section>'
 def shell(title,body,lead):
-    return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape(title)+'</title><link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="style.css"></head><body id="top"><nav aria-label="Навигация"><a href="index.html">Задание и методика</a><a href="areas.html">Предметные области</a><a href="downloads/assignment.pdf">Методика в PDF</a><a href="downloads/guide.pdf">Области в PDF</a></nav><main><header><p>Учебная практика ПМ.01</p><h1>'+html.escape(title)+'</h1><p>'+html.escape(lead)+'</p></header>'+body+'</main><footer><a href="#top">К началу</a></footer></body></html>'
-filelinks='<div class="links">'+''.join('<a href="downloads/'+p+'">'+l+'</a>' for p,l in [('starter.zip','Стартовый проект'),('data.zip','Исходные данные'),('reference.zip','Пример для сверки'),('report-template.md','Основа отчёта'),('tests-template.csv','Таблица испытаний')])+'</div>'
+    return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html.escape(title)+'</title><link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="style.css"></head><body id="top" class="'+('subject' if title=='Предметные области' else 'method')+'"><nav aria-label="Навигация"><a href="index.html">Задание и методика</a><a href="areas.html">Предметные области</a><a href="downloads/assignment.pdf">Методика в PDF</a><a href="downloads/guide.pdf">Области в PDF</a></nav><main><header><p>Учебная практика ПМ.01</p><h1>'+html.escape(title)+'</h1><p>'+html.escape(lead)+'</p></header>'+body+'</main><footer><a href="#top">К началу</a></footer></body></html>'
+filelinks='<div class="links">'+''.join('<a href="downloads/'+p+'">'+l+'</a>' for p,l in [('starter.zip','Стартовый проект'),('errors.zip','Ошибочные данные'),('reference.zip','Пример для сверки'),('tests.zip','Тестовый проект'),('Отчет%20о%20выполнении.docx','Чистая форма отчёта'),('tests-template.csv','Таблица испытаний')])+'</div>'
 body=''.join(render_page(p,f'assignment-{i}') for i,p in enumerate(assignment))
 body+=render_page(files,'files')+'<section>'+filelinks+'<p><a href="areas.html">Выбрать назначенную предметную область и её архив</a></p></section>'
 body+=''.join(render_page(p,'method' if i==0 else f'method-{i}') for i,p in enumerate(guide))
@@ -320,14 +342,14 @@ body=nav+''.join(render_page(p,f'v{i:02d}')+f'<section><div class="links"><a hre
 
 Полное задание находится в content/course.json, исходники образца — в app/.
 tools/build_materials.py создаёт сайт, PDF и архивы. Для генерации PDF нужны
-Python, ReportLab и шрифты Times New Roman/Consolas Windows. Для HTML используется
-Golos Text с лицензией в assets/. Результаты проверок хранятся в проекте аудита BrainM.
+Python, ReportLab, сохранённые Golos Text и шрифт Consolas. Для HTML используется
+Golos Text с лицензией в assets/. PDF использует закреплённый профиль блоков и маршрута. Результаты проверок хранятся в проекте аудита BrainM.
 
 Соответствие базовому ДЭ 09.02.07-2-2027, задание 2 (с. 37–38): календарная
 скидка, вывод карточек, суммарные остатки, подписи и подсветка. УП01 разрабатывает
 переносимый модуль и использует готовый источник JSON вместо повторного
 проектирования БД. Это учебный фрагмент подготовки, не замена всех заданий ДЭ.
-Другие практики подключают готовый модуль или предоставленный входной пакет.
+Модуль сдаётся в составе самостоятельного проекта этой практики.
 
 Предыдущая температурная область заменена; её обязательное повторное выполнение
 исключено. Все 30 новых областей отличаются от областей текущей УП11.
@@ -338,81 +360,8 @@ picture.png — предоставленный учебный ресурс ба�
 ''',encoding='utf-8', newline='\n')
 
 def build_pdfs():
-    from reportlab.pdfbase import pdfmetrics
-    from reportlab.pdfbase.ttfonts import TTFont
-    from reportlab.lib import colors
-    from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
-    from reportlab.lib.pagesizes import A4
-    from reportlab.lib.styles import ParagraphStyle
-    from reportlab.lib.units import mm
-    from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, Paragraph, Spacer, PageBreak, Preformatted, KeepTogether, Image
-    from reportlab.platypus.tableofcontents import TableOfContents
-    fonts=Path('C:/Windows/Fonts')
-    for name,filename in [('Times','times.ttf'),('Times-Bold','timesbd.ttf'),('Mono','consola.ttf')]:pdfmetrics.registerFont(TTFont(name,str(fonts/filename)))
-    pdfmetrics.registerFontFamily('Times',normal='Times',bold='Times-Bold',italic='Times',boldItalic='Times-Bold')
-    styles=dict(body=ParagraphStyle('body',fontName='Times',fontSize=14,leading=21,alignment=TA_JUSTIFY,firstLineIndent=12.5*mm,spaceAfter=9),
-        h1=ParagraphStyle('h1',fontName='Times-Bold',fontSize=16,leading=24,alignment=TA_CENTER,spaceBefore=10,spaceAfter=15,keepWithNext=True),
-        h2=ParagraphStyle('h2',fontName='Times-Bold',fontSize=14,leading=21,alignment=TA_JUSTIFY,spaceBefore=10,spaceAfter=8,keepWithNext=True),
-        code=ParagraphStyle('code',fontName='Mono',fontSize=10.5,leading=14,spaceAfter=12),
-        small=ParagraphStyle('small',fontName='Times',fontSize=12,leading=16,alignment=TA_LEFT,spaceAfter=10),
-        toc=ParagraphStyle('toc',fontName='Times',fontSize=12,leading=16,spaceAfter=4))
-    class Doc(BaseDocTemplate):
-        def beforeDocument(self):
-            self.area_name=None
-            self.area_start=1
-        def __init__(self,path):
-            super().__init__(str(path),pagesize=A4,leftMargin=30*mm,rightMargin=20*mm,topMargin=20*mm,bottomMargin=20*mm,title=path.stem,author='')
-            self.addPageTemplates(PageTemplate(id='normal',frames=[Frame(self.leftMargin,self.bottomMargin,self.width,self.height,id='body',leftPadding=0,rightPadding=0,topPadding=0,bottomPadding=0)],onPage=self.footer,onPageEnd=self.page_end))
-        def footer(self,c,doc):
-            c.setFont('Times',12);c.drawCentredString(A4[0]/2,10*mm,str(doc.page))
-        def page_end(self,c,doc):
-            if getattr(self,'area_start',self.page)==self.page:return
-            if getattr(self,'area_name',None):
-                c.setFont('Times',12)
-                c.drawRightString(A4[0]-20*mm,A4[1]-14*mm,self.area_name+' — продолжение')
-        def afterFlowable(self,f):
-            if isinstance(f,Paragraph) and getattr(f,'_toc',False):
-                txt=getattr(f,'_toc_title',f.getPlainText());key='p'+str(self.seq.nextf('section'))
-                if txt.startswith('Вариант '):self.area_name=txt.split(' · ')[0];self.area_start=self.page
-                self.canv.bookmarkPage(key);self.canv.addOutlineEntry(txt,key,0)
-                self.notify('TOCEntry',(0,txt,self.page,key))
-    def title(text):
-        p=Paragraph(html.escape(text.upper()),styles['h1']);p._toc=True;p._toc_title=text;return p
-    def contents():
-        toc=TableOfContents();toc.levelStyles=[styles['toc']];return [Paragraph('СОДЕРЖАНИЕ',styles['h1']),toc,PageBreak()]
-    def paragraphs(text):
-        # Bound long URLs without changing their link destinations.
-        import re
-        escaped=html.escape(text)
-        escaped=re.sub(r'https://[^\s&lt;]+',lambda m:'<link href="'+m.group(0)+'" color="black">'+m.group(0).replace('/','/\u200b')+'</link>',escaped)
-        return [Paragraph(t,styles['body']) for t in escaped.split('\n\n')]
-    def addpage(story,p,force=False):
-        if force:story.append(PageBreak())
-        story.append(title(p['title']))
-        for n,block in enumerate(p['blocks'],1):
-            story.append(Paragraph(html.escape(f'{n}. '+block['title']),styles['h2']))
-            if block['kind']=='code':
-                lines=[]
-                for line in block['text'].splitlines():lines+=textwrap.wrap(line,69,replace_whitespace=False,drop_whitespace=False,break_long_words=True,break_on_hyphens=False) or ['']
-                story.append(Preformatted('\n'.join(lines),styles['code']))
-            elif block['kind']=='image':
-                story+=paragraphs(block['text'])
-                from PIL import Image as PILImage
-                im=PILImage.open(ROOT/block['path']);w=160*mm;h=w*im.height/im.width
-                story.append(KeepTogether([Image(str(ROOT/block['path']),width=w,height=h),Paragraph('Рисунок 1 — Окно каталога и календарной цены',ParagraphStyle('caption',fontName='Times',fontSize=12,leading=12,alignment=TA_CENTER,spaceAfter=12))]))
-            else:story+=paragraphs(block['text'])
-    intro=[Paragraph('УЧЕБНАЯ ПРАКТИКА ПМ.01',styles['h1']),Spacer(1,18*mm),Paragraph('КАТАЛОГ И КАЛЕНДАРНАЯ ЦЕНА',styles['h1']),Spacer(1,10*mm),*paragraphs('Методические рекомендации по разработке десктопного приложения на C# и WPF. Специальность 09.02.07 «Информационные системы и программирование», квалификация «Программист».'),PageBreak()]
-    story=intro+contents()
-    for p in assignment:addpage(story,p)
-    addpage(story,files,True)
-    story+=paragraphs('Файлы доступны на странице '+SITE+' и в разделе «Файлы для работы». Данные назначенной области: '+SITE+'areas.html. Ссылки и архивы являются частью комплекта.')
-    for p in guide:addpage(story,p)
-    Doc(OUT/'assignment.pdf').multiBuild(story)
-    story=[Paragraph('ПРЕДМЕТНЫЕ ОБЛАСТИ УП ПМ.01',styles['h1']),*paragraphs('Назначить один вариант. Работа выполняется по общей методике в одном собственном приложении. Файлы каждого варианта доступны по ссылке в его карточке. Пример «Линия» не является второй обязательной работой.'),PageBreak()]+contents()
-    for i,p in enumerate(areas):
-        addpage(story,p,i>0)
-        story+=paragraphs('Данные области: '+SITE+'downloads/'+p['download']+'. Общая методика: '+SITE+'.')
-    Doc(OUT/'guide.pdf').multiBuild(story)
+    from render_approved import build
+    build(ROOT,course)
 
 if __name__=='__main__':
     import sys
